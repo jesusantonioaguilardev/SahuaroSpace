@@ -17,6 +17,7 @@ Alternativa: la presentación de 7 diapositivas en inglés (ver "Demo deck" abaj
 4. Personaje: **Luma** (la oferta y la voz se ven y escuchan más claras).
 5. Grabar pantalla del teléfono con audio del sistema; volumen al máximo.
 6. Probar una vez la frase del paso 0:12 para confirmar que aparece la oferta del GAD.
+7. **Marca de agua obligatoria (regla SI):** al editar, deja visible durante todo el video el texto "AI-generated character art · edited by SahuaroSpace" (por ejemplo, abajo a la derecha). Los personajes se hicieron con IA y la voz de los personajes es sintética (ElevenLabs); menciónalo en la descripción del video.
 
 ## Guion (tomas, voz y subtítulos)
 

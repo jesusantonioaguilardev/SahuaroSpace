@@ -56,7 +56,7 @@ Kotlin, Compose Multiplatform, Ktor, kotlinx.serialization, Android SpeechRecogn
 
 ## Use of Super Intelligence (SI)
 
-Yes. (1) An AI coding assistant (Anthropic Claude) helped us summarize NASA research pages, write documentation and specifications, and write and test code; the project concept and design decisions were made by the team. (2) At runtime, an OpenAI language model generates the companion's replies, and ElevenLabs generates the characters' voices (synthetic audio, acknowledged in the app and in the repository README). (3) [Character artwork: describe how it was created. If it was generated with an AI image tool, add a visible watermark to the images.] AI use is acknowledged in the repository README and LICENSE.
+Yes. (1) An AI coding assistant (Anthropic Claude) helped us summarize NASA research pages, write documentation and specifications, and write and test code; the project concept and design decisions were made by the team. (2) At runtime, an OpenAI language model generates the companion's replies, and ElevenLabs generates the characters' voices (synthetic audio, acknowledged in the app and in the repository README). (3) The character artwork (Luma, Pipo and Nix) was generated with an AI image tool and then edited by the team; every image, slide and video that shows the characters carries a visible "AI-generated character art · edited by SahuaroSpace" watermark, and the app shows the same note. AI use is acknowledged in the repository README and LICENSE.
 
 ## NASA Data
 
@@ -78,5 +78,5 @@ We used NASA Human Research Program evidence and standards to define the risks, 
 - OpenAI API (language model), ElevenLabs (text-to-speech, free premade voices Matilda, Jessica and Eric).
 - Supabase, supabase-js, openai (Node SDK), Ktor, kotlinx libraries, Compose Multiplatform, Material Icons, PGlite.
 - Google Fonts: Space Grotesk and Inter (presentation).
-- Character artwork (Luma, Pipo, Nix): [source].
+- Character artwork (Luma, Pipo, Nix): generated with an AI image tool and edited by the team (watermarked).
 - Source code: MIT License. All sensor data in the demo is simulated.

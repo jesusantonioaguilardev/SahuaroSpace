@@ -162,5 +162,7 @@ fun CharacterPicker(selected: Character, onSelect: (Character) -> Unit) {
                 }
             }
         }
+        // CHAR-07: aviso visible de arte y voces generados con IA
+        Text(t("ai_art_note"), color = EcoColors.Muted, fontSize = 12.sp)
     }
 }

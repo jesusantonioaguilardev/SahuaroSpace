@@ -21,6 +21,7 @@
 | CHAR-03 | Cada personaje DEBE tener **su propia voz**. Si la voz de ElevenLabs no está disponible, DEBE usarse la voz del sistema (nunca quedarse en silencio). | 🟢 |
 | CHAR-04 | Sin IA, cada personaje DEBE responder con frases propias de su personalidad (CHAT-08). | ✅ |
 | CHAR-05 | La IA DEBE elegir una emoción por respuesta según lo que dice y el personaje, y NO DEBE elegir `laugh` si hay riesgo. La app DEBE mostrar `worried` si hay riesgo, sin importar la emoción. | 🟢 |
+| CHAR-07 | **Arte generado con IA (regla SI de Space Apps).** El arte de Luma, Pipo y Nix se creó con IA y lo editó el equipo. Toda imagen o video del proyecto donde aparezcan DEBE llevar una marca de agua visible ("AI-generated character art · edited by SahuaroSpace"): diapositivas, imágenes de diseño del repositorio y video. En la app, el selector de personaje DEBE mostrar esa nota. Las voces son audio sintético de ElevenLabs y DEBEN declararse en el README. | 🟢 |
 | CHAR-06 | Si preguntan quién es, el personaje DEBE decir su nombre; la plataforma se llama ELOISE. | 🟢 |
 
 ## Pruebas automáticas
