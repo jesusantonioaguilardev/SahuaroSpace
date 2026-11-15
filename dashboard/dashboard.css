@@ -1,0 +1,52 @@
+/* Ajustes del dashboard real sobre el diseño ELOISE (eloise.css viene tal cual del diseño de Figma Make).
+   El diseño original tiene arriba una barra de prototipo de 42px que aquí no existe. */
+.app { padding-top: 0 !important; }
+.desktop-shell { min-height: 100vh; }
+.desktop-shell > aside { height: 100vh; top: 0; }
+.mobile-header { top: 0; }
+
+/* Acceso del médico */
+.login-wrap { min-height: 100vh; display: grid; place-items: center; padding: 24px 16px; }
+.login-card { width: 100%; max-width: 420px; }
+.login-card .logo { margin-bottom: 26px; }
+.login-card h1 { font: 600 22px/1.2 Manrope, system-ui, sans-serif; margin-bottom: 6px; }
+.login-card p { color: var(--muted); font-size: 12px; margin-bottom: 18px; }
+.field { display: block; margin-bottom: 14px; }
+.field span { display: block; color: #8298ae; font-size: 9px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin-bottom: 6px; }
+.field input, .field select {
+  width: 100%; height: 40px; border-radius: 5px; border: 1px solid var(--line2); background: #0d1a29;
+  color: var(--text); padding: 0 12px; font-size: 13px;
+}
+.field input:focus, .field select:focus, .button:focus-visible, button:focus-visible {
+  outline: 2px solid var(--cyan); outline-offset: 2px;
+}
+.error-text { color: #ff7b85; font-size: 12px; margin: 4px 0 12px; }
+.login-card .button { width: 100%; height: 44px; font-size: 12px; }
+
+/* Avisos */
+.toast {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 100;
+  background: #172a3e; border: 1px solid #2d4d68; color: var(--text); border-radius: 6px;
+  padding: 10px 16px; font-size: 12px; box-shadow: 0 10px 30px #0008; max-width: calc(100% - 32px);
+}
+.toast[hidden] { display: none; }
+
+/* La regla del diseño ".table-row>span>span" ponía las pastillas de estado en columna */
+.table-row > span > .pill { display: inline-flex; flex-direction: row; }
+
+/* Pequeños complementos */
+.lang-btn, .logout-btn { border: 1px solid var(--line); background: #102033; color: #9cb1c4; border-radius: 5px; height: 30px; padding: 0 10px; font-size: 10px; font-weight: 600; }
+.aside-bottom .logout-btn { display: flex; align-items: center; gap: 8px; width: 100%; height: 36px; margin-bottom: 10px; }
+.crew-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+.empty-note { color: var(--muted); font-size: 11px; padding: 6px 0; }
+.char-avatar { width: 46px; height: 46px; object-fit: contain; }
+.char-avatar.small { width: 30px; height: 30px; }
+.lock-note { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; }
+.table-row.selected-row { background: #13283c; }
+.mood-timeline i.empty { opacity: .2; }
+.ship-map .module.risk { border-color: var(--red) !important; box-shadow: 0 0 18px #ff4d5a44; }
+.ship-map .module.warn { border-color: var(--yellow) !important; }
+.dose-bars small.over { color: #ff7b85; }
+select.compact { height: 32px; border-radius: 5px; border: 1px solid var(--line2); background: #0d1a29; color: var(--text); padding: 0 8px; font-size: 11px; }
+.event-buttons button.active.danger strong { color: #ff7b85; }
+@media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }

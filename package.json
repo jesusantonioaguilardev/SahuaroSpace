@@ -1,0 +1,26 @@
+{
+  "name": "eloise-mission-care",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "ELOISE · Mission Care System — AI companion and health monitoring for astronauts (NASA Space Apps 2026, Team SahuaroSpace)",
+  "scripts": {
+    "start": "node server/server.mjs",
+    "test": "node --test server/test/eco.test.mjs supabase/test/schema.test.mjs",
+    "test:contract": "node --test server/test/contract.test.mjs",
+    "test:app": "node mobile/test-app.mjs",
+    "eval:safety": "node server/test/eval-safety.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.119.0",
+    "openai": "^7.57.0"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.2.17"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jesusantonioaguilardev/SahuaroSpace.git"
+  }
+}

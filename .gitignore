@@ -1,0 +1,27 @@
+# --- Secretos: NUNCA se suben (claves de OpenAI, ElevenLabs y Supabase) ---
+.env
+.env.*
+!.env.example
+
+# --- Dependencias y compilados ---
+node_modules/
+mobile/.gradle/
+mobile/build/
+mobile/composeApp/build/
+mobile/local.properties
+mobile/.kotlin/
+*.apk
+*.aab
+
+# --- Editores y herramientas locales ---
+.idea/
+*.iml
+.vscode/
+.claude/
+
+# --- Sistema operativo y registros ---
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+npm-debug.log*

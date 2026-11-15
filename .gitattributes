@@ -1,0 +1,12 @@
+# Texto normalizado en el repositorio; scripts con el fin de línea que necesita cada sistema
+* text=auto
+mobile/gradlew text eol=lf
+*.sh text eol=lf
+*.bat text eol=crlf
+
+# Binarios
+*.png binary
+*.jpg binary
+*.webp binary
+*.mp3 binary
+*.jar binary

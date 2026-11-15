@@ -1,0 +1,228 @@
+openapi: 3.1.0
+info:
+  title: ELOISE · Servidor de la nave
+  version: 1.0.0
+  description: |
+    Contrato HTTP entre la app de la tripulación, el panel del médico y el servidor (server/server.mjs).
+    Requisito API-01: el servidor DEBE responder exactamente con estas rutas, métodos, cuerpos y códigos.
+    Las claves de OpenAI, ElevenLabs y la clave secreta de Supabase viven solo en el servidor (PRIV-06).
+
+    Autenticación: `Authorization: Bearer <token de sesión de Supabase>`.
+    Sin token, solo se aceptan peticiones desde la misma computadora (127.0.0.1 / ::1),
+    para el prototipo web y el emulador con `adb reverse`.
+servers:
+  - url: http://localhost:3000
+security:
+  - supabaseSession: []
+  - {}
+paths:
+  /api/status:
+    get:
+      summary: Qué servicios están configurados (sin exponer claves)
+      security: [{}]
+      responses:
+        '200':
+          description: Estado
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [llm, model, supabase, tts]
+                properties:
+                  llm: { type: boolean }
+                  model: { type: [string, 'null'] }
+                  supabase: { type: boolean }
+                  tts: { type: object }
+  /api/config:
+    get:
+      summary: Configuración pública para el panel web (solo la clave pública de Supabase)
+      security: [{}]
+      responses:
+        '200':
+          description: Configuración pública
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [supabaseUrl, supabaseKey, missionId]
+                properties:
+                  supabaseUrl: { type: string }
+                  supabaseKey: { type: string, description: 'Clave pública (anon). NUNCA la secreta.' }
+                  missionId: { type: string, format: uuid }
+  /api/eco:
+    post:
+      summary: Respuesta del personaje en el chat (CHAT, MEM, SAFE)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EcoRequest' }
+      responses:
+        '200':
+          description: Respuesta del personaje
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EcoResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '413': { description: 'Cuerpo mayor a 100 kB' }
+        '502': { $ref: '#/components/responses/Upstream' }
+        '503': { $ref: '#/components/responses/NoKey' }
+  /api/live:
+    post:
+      summary: Turno del modo en vivo — respuesta, emoción y voz en una sola llamada (LIVE-04)
+      description: Igual que /api/eco, con respuestas más cortas y el audio incluido.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/EcoRequest' }
+      responses:
+        '200':
+          description: Respuesta con voz
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: '#/components/schemas/EcoResponse'
+                  - type: object
+                    required: [audio]
+                    properties:
+                      audio:
+                        type: [string, 'null']
+                        contentEncoding: base64
+                        description: MP3 de la voz del personaje; null si la voz falló (la app usa la voz del sistema).
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '502': { $ref: '#/components/responses/Upstream' }
+        '503': { $ref: '#/components/responses/NoKey' }
+  /api/tts:
+    post:
+      summary: Voz del personaje (ElevenLabs) para un texto (CHAR-03)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [text]
+              properties:
+                text: { type: string, minLength: 1 }
+                character: { $ref: '#/components/schemas/Character' }
+                lang: { $ref: '#/components/schemas/Lang' }
+      responses:
+        '200':
+          description: Audio MP3
+          content:
+            audio/mpeg: {}
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '502': { $ref: '#/components/responses/Upstream' }
+        '503': { $ref: '#/components/responses/NoKey' }
+  /api/sim/status:
+    get:
+      summary: Estado del simulador (DASH-05)
+      responses:
+        '200': { description: Estado del simulador }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '503': { description: 'Supabase no configurado', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+  /api/sim/{action}:
+    post:
+      summary: Acciones de la consola de demo (solo médico, simulador o admin)
+      parameters:
+        - name: action
+          in: path
+          required: true
+          schema: { type: string, enum: [storm, clear, speed, run, toggle, reset] }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                speed: { type: integer, enum: [1, 60, 600], description: 'Solo para action=speed; otro valor → 60' }
+                running: { type: boolean, description: 'Solo para action=run' }
+                name: { type: string, enum: [lowO2, highCO2, lowSpo2, badSleep], description: 'Solo para action=toggle' }
+                crewId: { type: string, format: uuid, description: 'Para lowSpo2 y badSleep' }
+      responses:
+        '200': { description: 'Resultado + status del simulador' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { description: 'Acción desconocida', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+        '405': { description: 'Método no permitido' }
+        '503': { description: 'Supabase no configurado' }
+  /api/{other}:
+    get:
+      summary: Cualquier otra ruta de la API
+      parameters:
+        - { name: other, in: path, required: true, schema: { type: string } }
+      responses:
+        '404': { description: 'No existe', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+
+components:
+  securitySchemes:
+    supabaseSession:
+      type: http
+      scheme: bearer
+  schemas:
+    Character: { type: string, enum: [luma, pipo, nix], default: luma, description: 'Valor desconocido → luma' }
+    Lang: { type: string, enum: [es, en], default: es, description: 'Valor distinto de "en" → es' }
+    Mode: { type: string, enum: [listen, companion, shelter], default: listen, description: 'Valor desconocido → listen' }
+    Risk: { type: string, enum: [none, self_harm_risk, acute_panic, other_serious] }
+    Emotion:
+      type: string
+      enum: [neutral, happy, laugh, love, thinking, surprised, sad, worried, calm, idea, celebrate, cool, encourage, wink]
+      description: Expresión del personaje; la app la convierte en pose (LIVE-10, CHAR-05).
+    Turn:
+      type: object
+      required: [role, text]
+      properties:
+        role: { type: string, enum: [user, assistant] }
+        text: { type: string, maxLength: 800, description: 'Se recorta a 800 caracteres' }
+    EcoRequest:
+      type: object
+      required: [message]
+      properties:
+        message: { type: string, minLength: 1, maxLength: 2000, description: 'Se recorta a 2000 y se quitan espacios; vacío → 400' }
+        mode: { $ref: '#/components/schemas/Mode' }
+        character: { $ref: '#/components/schemas/Character' }
+        lang: { $ref: '#/components/schemas/Lang' }
+        summary: { type: object, description: 'Resumen de datos simulados del tripulante (se recorta a 3000 caracteres)' }
+        history:
+          type: array
+          items: { $ref: '#/components/schemas/Turn' }
+          maxItems: 20
+          description: 'Se conservan los últimos 20; el primero suele ser el saludo del personaje (CHAT-06)'
+        memory:
+          type: array
+          items: { type: string, maxLength: 200 }
+          maxItems: 40
+          description: 'Recuerdos de la persona (MEM-03); se conservan los últimos 40, cada uno hasta 200 caracteres'
+    Instrument:
+      type: string
+      enum: [none, phq, gad]
+      description: Cuestionario que conviene ofrecer (INST-02). none si no aplica o si hay riesgo.
+    EcoResponse:
+      type: object
+      required: [reply, risk, remember, emotion, suggest_instrument, model]
+      properties:
+        reply: { type: string, maxLength: 1200 }
+        risk: { $ref: '#/components/schemas/Risk' }
+        remember:
+          type: array
+          maxItems: 3
+          items: { type: string, maxLength: 200 }
+          description: 'Recuerdos NUEVOS (MEM-02): sin duplicados ni los que ya estaban en memory'
+        emotion: { $ref: '#/components/schemas/Emotion' }
+        suggest_instrument: { $ref: '#/components/schemas/Instrument' }
+        model: { type: string }
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string, description: 'Código corto: bad_request, empty_message, empty_text, unauthorized, forbidden, no_api_key, auth, rate_limit, model, upstream, server, not_found, unknown_action…' }
+  responses:
+    BadRequest: { description: 'Petición inválida o mensaje vacío', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Unauthorized: { description: 'Sin sesión y no viene de esta computadora', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Forbidden: { description: 'Rol sin permiso', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    Upstream: { description: 'Falló OpenAI o ElevenLabs (el código dice por qué, sin contenido de la conversación)', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
+    NoKey: { description: 'Falta la clave del servicio en .env', content: { application/json: { schema: { $ref: '#/components/schemas/Error' } } } }
